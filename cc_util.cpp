@@ -889,7 +889,12 @@ namespace ccutil{
 		}
 		return mapper;
 	}
-
+/**
+ * @brief 
+ * 从文件中载入list，以换行为分割
+ * @param listfile 
+ * @return vector<string> 
+ */
 	vector<string> loadList(const string& listfile){
 
 		vector<string> lines;
@@ -931,7 +936,12 @@ namespace ccutil{
 		}
 		return lines;
 	}
-
+  /**
+ * @brief 
+ * 提取字符串中的文件路径
+ * @param path 
+ * @return string 
+ */
 	string directory(const string& path){
 
 		if (path.empty())
@@ -945,7 +955,12 @@ namespace ccutil{
 #endif
 		return path.substr(0, p + 1);
 	}
-
+  /**
+ * @brief 
+ * 将list写入文件
+ * @param file 写入的文件路径
+ * @param list  待写入的list
+ */
 	bool saveList(const string& file, const vector<string>& list){
 
 		FILE* f = fopen(file.c_str(), "wb");
@@ -965,7 +980,10 @@ namespace ccutil{
 		fclose(f);
 		return true;
 	}
-
+/**
+ * @brief 
+ * 检测str的开头/结尾是否和with一样
+ */
 	bool beginsWith(const string& str, const string& with){
 
 		if (str.length() < with.length())
@@ -980,7 +998,14 @@ namespace ccutil{
 
 		return strncmp(str.c_str() + str.length() - with.length(), with.c_str(), with.length()) == 0;
 	}
-
+/**
+ * @brief 
+ * 替换str中特定的片段
+ * @param str 
+ * @param token 需要被替换的片段
+ * @param value  用于替换的片段
+ * @return string 
+ */
 	string repstrFast(const string& str, const string& token, const string& value){
 
 		string opstr;
