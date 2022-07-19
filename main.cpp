@@ -25,13 +25,16 @@ cout << "begin end ha" << endl;
     HelloFunc();
     ccutil::BBox btest = {};
     vector<string> list = ccutil::findFiles("/home/ye/图片/BingWallpaper");
-    for (int i=0;i<list.size();i++){
-    Mat img = imread(list[i]);
-    namedWindow("window",cv::WINDOW_NORMAL);
-    resizeWindow("window",cv::Size(640*2,480*2));
-	imshow("window", img);//创建一个窗口来显示图像img
-	waitKey(2000);//不断刷新图像
-    }
+    string file = list[0];
+    string data = ccutil::loadfile(file);
+    auto size = ccutil::fileSize(file);
+    // for (int i=0;i<list.size();i++){
+    // Mat img = imread(list[i]);
+    // namedWindow("window",cv::WINDOW_NORMAL);
+    // resizeWindow("window",cv::Size(640*2,480*2));
+	// imshow("window", img);//创建一个窗口来显示图像img
+	// waitKey(2000);//不断刷新图像
+    // }
 #else
     cout << "linux" << endl;
     cout << "good" << endl;
@@ -39,4 +42,5 @@ cout << "begin end ha" << endl;
  
 
     return 0;
+
 }

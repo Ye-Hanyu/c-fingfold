@@ -410,6 +410,7 @@ namespace ccutil{
 				if (*(ptr_matcher + 1)){
 					if (patternMatchBody(str, ptr_matcher + 1, igrnoe_case))
 						return true;
+						// 跳过*，检查下个字母
 				}
 				else{
 					return true;
@@ -441,6 +442,7 @@ namespace ccutil{
 		//   abcdefg.png          a?cdefg.png > true
 
 		if (!matcher || !*matcher || !str || !*str) return false;
+		// 检验参数是否都存在
 
 		char filter[500];
 		strcpy(filter, matcher);
@@ -596,12 +598,29 @@ namespace ccutil{
 		string realpath = directory;
 		if (realpath.empty())
 			realpath = "./";
+			// 空则在当前运行位置寻找文件
 
 		char backchar = realpath.back();
 		if (backchar != '\\' && backchar != '/')
 			realpath += "/";
+			// 末尾添加'/'用来和文件名连接
 
 		struct dirent* fileinfo;
+		/*
+		struct dirent
+		{
+		long d_ino;                     
+		off_t d_off;                    
+		unsigned short d_reclen;        
+		char d_name [NAME_MAX+1];       
+		}
+		d_ino存放的是该文件的索引节点号inode；
+		d_off 是文件在目录中的编移，具体是什么意思也不是很明白，很少用到它，
+		基本上就是用到d_name
+		short d_reclen是这个文件的长度，需要注意的是这里的长度并不是指文件大小，
+		因为大小和长度是两回回事了，你可以用lseek将文件长度移得很长，但大小其实还是那么大。
+		最后一个元素就是我们要的了，文件名称。
+		*/
 		DIR* handle;
 		stack<string> ps;
 		vector<string> out;
@@ -613,22 +632,28 @@ namespace ccutil{
 			ps.pop();
 
 			handle = opendir(search_path.c_str());
+			// opendir函数打开一个与给定的目录名name相对应的目录流，
+			// 并返回一个指向该目录流的指针。打开后，该目录流指向了目录中的第一个目录项。
 			if (handle != 0)
 			{
-				while (fileinfo = readdir(handle))
+				while (fileinfo = readdir(handle)) //readdir函数返回一个指向dirent结构体的指针
 				{
-					struct stat file_stat;
+					struct stat file_stat; // 文件系统属性
 					if (strcmp(fileinfo->d_name, ".") == 0 || strcmp(fileinfo->d_name, "..") == 0)
+						// 检查 文件名称是否存在？检查隐藏文件？
 						continue;
 
 					if (lstat((search_path + fileinfo->d_name).c_str(), &file_stat) < 0)
+						// 取得参数file_name 所指的文件状态，执行成功则返回0, 失败返回-1
 						continue;
 
 					if (!findDirectory && !S_ISDIR(file_stat.st_mode) ||
 						findDirectory && S_ISDIR(file_stat.st_mode))
+						// S_ISDIR()函数的作用是判断一个路径是不是目录
 					{
 						if (patternMatch(fileinfo->d_name, filter.c_str()))
 							out.push_back(search_path + fileinfo->d_name);
+							// 判断名字并压入out
 					}
 
 					if (includeSubDirectory && S_ISDIR(file_stat.st_mode))
@@ -650,13 +675,14 @@ namespace ccutil{
 
 		in.seekg(0, ios::end);
 		size_t length = in.tellg();
-
+		// seekg设定输入流中文件指针的位置
 		string data;
 		if (length > 0){
 			in.seekg(0, ios::beg);
 			data.resize(length);
 
 			in.read(&data[0], length);
+			//从输入流中提取length个字符，并把他们存数组data中
 		}
 		in.close();
 		return data;
