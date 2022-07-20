@@ -323,6 +323,7 @@ namespace ccutil{
 		return out;
 	}
 
+// 交集
 	BBox BBox::mergeOf(const BBox& b) const{
 		auto& a = *this;
 		BBox out;
@@ -333,6 +334,7 @@ namespace ccutil{
 		return out;
 	}
 
+// 扩大
 	BBox BBox::expandMargin(float margin, const cv::Size& limit) const {
 
 		BBox expandbox;
@@ -390,10 +392,20 @@ namespace ccutil{
 		if (ignore_case){
 			a = a > 'a' && a < 'z' ? a - 'a' + 'A' : a;
 			b = b > 'a' && b < 'z' ? b - 'a' + 'A' : b;
+			// 大小写转码
 		}
 		return a == b;
 	}
 
+/**
+ * @brief 
+ * 匹配两个str的每个字母是否相同，？匹配所有，*跳过，；忽略
+ * @param str 
+ * @param matcher 
+ * @param igrnoe_case 是否忽略大小写
+ * @return true 
+ * @return false 
+ */
 	static bool patternMatchBody(const char* str, const char* matcher, bool igrnoe_case){
 		//   abcdefg.pnga          *.png      > false
 		//   abcdefg.png           *.png      > true
@@ -436,6 +448,15 @@ namespace ccutil{
 		return true;
 	}
 
+/**
+ * @brief 
+ *  * 匹配两个str的每个字母是否相同，？匹配所有，*跳过，；忽略
+ * @param str 
+ * @param matcher 
+ * @param igrnoe_case  是否忽略大小写
+ * @return true 
+ * @return false 
+ */
 	bool patternMatch(const char* str, const char* matcher, bool igrnoe_case){
 		//   abcdefg.pnga          *.png      > false
 		//   abcdefg.png           *.png      > true
@@ -469,6 +490,13 @@ namespace ccutil{
 		return false;
 	}
 
+/**
+ * @brief 
+ * 将str用spstr进行分割，返回分割后结果
+ * @param str 
+ * @param spstr 
+ * @return vector<string> 
+ */
 	vector<string> split(const string& str, const std::string& spstr){
 
 		vector<string> res;
@@ -499,6 +527,7 @@ namespace ccutil{
 		return res;
 	}
 
+// 将str分割成int
 	vector<int> splitInt(const string& str, const string& spstr){
 
 		auto arr = split(str, spstr);
@@ -508,6 +537,7 @@ namespace ccutil{
 		return out;
 	}
 
+// 将str分割成float
 	vector<float> splitFloat(const string& str, const string& spstr){
 		auto arr = split(str, spstr);
 		vector<float> out(arr.size());
@@ -515,7 +545,15 @@ namespace ccutil{
 			out[i] = atof(arr[i].c_str());
 		return out;
 	}
-
+/**
+	 * @brief 
+	 * 遍历文件夹下所有文件以及缓存的list
+	 * @param directory 
+	 * @param filter 
+	 * @param findDirectory 
+	 * @param includeSubDirectory 是否包含子目录
+	 * @return vector<string> 
+	 */
 	vector<string> findFilesAndCacheList(const string& directory, const string& filter, bool findDirectory, bool includeSubDirectory){
 
 		string path = directory;
@@ -591,7 +629,15 @@ namespace ccutil{
 	}
 #endif
 
-// 寻找文件
+/**
+ * @brief 
+ * 遍历文件夹下文件
+ * @param directory 文件夹目录
+ * @param filter 过滤规则
+ * @param findDirectory 指定是否为寻找子文件夹模式
+ * @param includeSubDirectory 是否包含子文件夹下的子文件夹
+ * @return vector<string>  文件名列表
+ */
 #ifdef U_OS_LINUX
 	vector<string> findFiles(const string& directory, const string& filter, bool findDirectory, bool includeSubDirectory)
 	{
@@ -667,6 +713,12 @@ namespace ccutil{
 #endif
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+/**
+ * @brief 
+ * 载入文件内数据为string
+ * @param file 
+ * @return string 
+ */
 	string loadfile(const string& file){
 
 		ifstream in(file, ios::in | ios::binary);
@@ -688,6 +740,12 @@ namespace ccutil{
 		return data;
 	}
 
+/**
+ * @brief 
+ * 求文件内数据大小
+ * @param file 
+ * @return size_t 
+ */
 	size_t fileSize(const string& file){
 
 #if defined(U_OS_LINUX)
@@ -705,6 +763,15 @@ namespace ccutil{
 #endif
 	}
 
+/**
+ * @brief 
+ * 将data保存成文件
+ * @param file 
+ * @param data 
+ * @param mk_dirs 是否要建文件夹
+ * @return true 
+ * @return false 
+ */
 	bool savefile(const string& file, const string& data, bool mk_dirs){
 		return savefile(file, data.data(), data.size(), mk_dirs);
 	}
@@ -745,6 +812,14 @@ namespace ccutil{
 		return true;
 	}
 
+/**
+ * @brief 
+ * 提取str中位于begin和end之间的string
+ * @param str 
+ * @param begin 
+ * @param end 
+ * @return string 
+ */
 	string middle(const string& str, const string& begin, const string& end){
 
 		auto p = str.find(begin);
@@ -757,6 +832,17 @@ namespace ccutil{
 		return str.substr(p, e - p);
 	}
 
+/**
+ * @brief 
+ * 保存BBox为xml文件
+ * @param file 
+ * @param img_name 
+ * @param width 
+ * @param height 
+ * @param objs 
+ * @return true 
+ * @return false 
+ */
 	bool savexml(const string& file, string img_name, int width, int height, const vector<LabBBox>& objs){
 		FILE* f = fopen(file.c_str(), "wb");
 		if (!f) return false;
@@ -780,7 +866,16 @@ namespace ccutil{
 		fclose(f);
 		return true;
 	}
-
+	
+/**
+ * @brief 
+ * 载入xml文件为string
+ * @param data 
+ * @param width 
+ * @param height 
+ * @param filter 
+ * @return vector<LabBBox> 
+ */
 	vector<LabBBox> loadxmlFromData(const string& data, int* width, int* height, const string& filter){
 
 		vector<LabBBox> output;

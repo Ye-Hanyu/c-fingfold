@@ -23,13 +23,20 @@ cout << "begin end ha" << endl;
 	// imshow("Image", img);//创建一个窗口来显示图像img
 	// waitKey(0);//不断刷新图像
     HelloFunc();
+    string str1="hahs.png";
+    string str2="hahs.png;hahs.png";
+    const char *srt1 = str1.c_str();
+    const char *srt2 = str2.c_str();
+    bool is_same = ccutil::patternMatch(srt1, srt2);
+    ccutil::BBox btest2 ={56.2,24.3,45.6,45.1,99.9,1} ;
     ccutil::BBox btest = {};
-    vector<string> list = ccutil::findFiles("/home/ye/图片/BingWallpaper");
+    string filter = "*";
+    vector<string> list = ccutil::findFiles("/home/ye/图片", filter, true, true);
     string file = "/home/ye/图片/test.xml";
     string data = ccutil::loadfile(file);
     auto size = ccutil::fileSize(file);
     int width = 1344;
-    string filter = "*";
+
     vector<ccutil::LabBBox> box = ccutil::loadxmlFromData(data, &width, &width, filter);
     string file2 = "/home/ye/图片/test2.xml";
     string imagename = "test.jpg";

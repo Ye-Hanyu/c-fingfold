@@ -48,6 +48,10 @@ namespace ccutil {
 	using std::vector;
 	using std::map;
 
+/**
+ * @brief 
+ * 目标检测框
+ */
 	struct BBox {
 		cv::Mat alig_face;
 		cv::Mat alig_face_feature;
@@ -266,7 +270,7 @@ namespace ccutil {
 	//str="abcdef"   begin="ab"   end="f"   return "cde"
 	string middle(const string& str, const string& begin, const string& end);
 
-	//load bbox from std xml file
+	
 	vector<LabBBox> loadxmlFromData(const string& data, int* width, int* height, const string& filter);
 	vector<LabBBox> loadxml(const string& file, int* width = nullptr, int* height = nullptr, const string& filter = "");
 	bool savexml(const string& file, string imagename, int width, int height, const vector<LabBBox>& objs);
@@ -291,8 +295,6 @@ namespace ccutil {
 	string vocxml(const string& vocjpg);
 	string vocjpg(const string& vocxml);
 
-	//file operator
-	//read file return all data
 	string loadfile(const string& file);
 	size_t fileSize(const string& file);
 	bool savefile(const string& file, const string& data, bool mk_dirs = true);
@@ -329,16 +331,12 @@ namespace ccutil {
 	string md5(const void* data, int length);
 	string md5(const string& data);
 
-	//find 
 	vector<string> findFiles(const string& directory, const string& filter = "*", bool findDirectory = false, bool includeSubDirectory = false);
 	vector<string> findFilesAndCacheList(const string& directory, const string& filter = "*", bool findDirectory = false, bool includeSubDirectory = false);
 
 	//  a == A   ->   ignore_case=true   ->  return true
 	bool alphabetEqual(char a, char b, bool ignore_case);
 
-	//   abcdefg.pnga          *.png      > false
-	//   abcdefg.png           *.png      > true
-	//   abcdefg.png          a?cdefg.png > true
 	bool patternMatch(const char* str, const char* matcher, bool igrnoe_case = true);
 
 	vector<string> batchRepSuffix(const vector<string>& filelist, const string& newSuffix);
