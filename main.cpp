@@ -23,12 +23,22 @@ cout << "begin end ha" << endl;
 	// imshow("Image", img);//创建一个窗口来显示图像img
 	// waitKey(0);//不断刷新图像
     HelloFunc();
+    int info[4];
     string str1="hahs.png";
     string str2="hahs.png;hahs.png";
+    // string dir = "/home/ye/图片/1";
+    // bool is_dir = ccutil::rmtree(dir);
     const char *srt1 = str1.c_str();
     const char *srt2 = str2.c_str();
     bool is_same = ccutil::patternMatch(srt1, srt2);
-    ccutil::BBox btest2 ={56.2,24.3,45.6,45.1,99.9,1} ;
+    ccutil::BBox btest2 ={200,200,600,600,99.9,1} ;
+    string imgf = "/home/ye/图片/test.png";
+    Mat img = imread(imgf);
+    ccutil::drawbbox(img, btest2, ccutil::Voc, str1);
+    namedWindow("window",cv::WINDOW_NORMAL);
+    resizeWindow("window",cv::Size(640*2,480*2));
+	imshow("window", img);//创建一个窗口来显示图像img
+	waitKey(0);//不断刷新图像
     ccutil::BBox btest = {};
     string filter = "*";
     vector<string> list = ccutil::findFiles("/home/ye/图片", filter, true, true);

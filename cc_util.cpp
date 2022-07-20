@@ -866,7 +866,7 @@ namespace ccutil{
 		fclose(f);
 		return true;
 	}
-	
+
 /**
  * @brief 
  * 载入xml文件为string
@@ -955,6 +955,12 @@ namespace ccutil{
 #endif
 	}
 
+/**
+ * @brief 
+ * 载入list文件为map
+ * @param listfile 
+ * @return map<string, string> 
+ */
 	map<string, string> loadListMap(const string& listfile){
 
 		auto list = loadList(listfile);
@@ -984,6 +990,7 @@ namespace ccutil{
 		}
 		return mapper;
 	}
+
 /**
  * @brief 
  * 从文件中载入list，以换行为分割
@@ -1031,6 +1038,7 @@ namespace ccutil{
 		}
 		return lines;
 	}
+
   /**
  * @brief 
  * 提取字符串中的文件路径
@@ -1050,6 +1058,7 @@ namespace ccutil{
 #endif
 		return path.substr(0, p + 1);
 	}
+
   /**
  * @brief 
  * 将list写入文件
@@ -1075,6 +1084,7 @@ namespace ccutil{
 		fclose(f);
 		return true;
 	}
+
 /**
  * @brief 
  * 检测str的开头/结尾是否和with一样
@@ -1093,6 +1103,7 @@ namespace ccutil{
 
 		return strncmp(str.c_str() + str.length() - with.length(), with.c_str(), with.length()) == 0;
 	}
+
 /**
  * @brief 
  * 替换str中特定的片段
@@ -1161,6 +1172,14 @@ namespace ccutil{
 		return str;
 	}
 
+/**
+ * @brief 
+ * 检测是否有空格
+ * @param str 
+ * @param blank 
+ * @return true 
+ * @return false 
+ */
 	bool isblank(const string& str, char blank){
 		if (str.empty()) return true;
 		
@@ -1173,6 +1192,11 @@ namespace ccutil{
 		return true;
 	}
 
+/**
+ * @brief 
+ * 去处空行
+ * @param list 
+ */
 	void rmblank(vector<string>& list){
 
 		vector<string> result;
@@ -1207,14 +1231,17 @@ namespace ccutil{
 		return path;
 	}
 
+//voc图片地址改xml地址
 	string vocxml(const string& vocjpg){
 		return repsuffix(repstr(vocjpg, "JPEGImages", "Annotations"), "xml");
 	}
 
+//vocxml地址改图片地址
 	string vocjpg(const string& vocxml){
 		return repsuffix(repstr(vocxml, "Annotations", "JPEGImages"), "jpg");
 	}
 
+// 替换文件后缀名
 	string repsuffix(const string& path, const string& newSuffix){
 
 		int p = path.rfind('.');
@@ -1233,6 +1260,7 @@ namespace ccutil{
 		return path + "." + newSuffix;
 	}
 
+// 整批替换文件后缀名
 	vector<string> batchRepSuffix(const vector<string>& filelist, const string& newSuffix){
 		
 		vector<string> newlist = filelist;
@@ -1241,6 +1269,7 @@ namespace ccutil{
 		return newlist;
 	}
 
+// 从路径中提取文件名
 	string fileName(const string& path, bool include_suffix){
 
 		if (path.empty()) return "";
@@ -1265,19 +1294,26 @@ namespace ccutil{
 		return path.substr(p, u - p);
 	}
 
+/**
+ * @brief 
+ * 按类别进行NMS
+ * @param objs 
+ * @param iou_threshold 
+ * @return vector<BBox> 
+ */
 	vector<BBox> nmsAsClass(const vector<BBox>& objs, float iou_threshold) {
 
 		map<int, vector<BBox>> mapper;
 		for (int i = 0; i < objs.size(); ++i) {
 			mapper[objs[i].label].push_back(objs[i]);
-		}
+		}  // 按类别写入map
 
 		vector<BBox> out;
 		for (auto& item : mapper) {
-			auto& objsClasses = item.second;
+			auto& objsClasses = item.second;  //将map中的value赋值给前面的参数
 			std::sort(objsClasses.begin(), objsClasses.end(), [](const BBox& a, const BBox& b) {
 				return a.score > b.score;
-			});
+			});  // 按置信度有高到低进行排列
 			
 			vector<int> flags(objsClasses.size());
 			for (int i = 0; i < objsClasses.size(); ++i) {
@@ -1414,6 +1450,13 @@ namespace ccutil{
 #endif
 	}
 
+/**
+ * @brief 
+ * 打开文件，目录不存在则生成目录
+ * @param path 
+ * @param mode 
+ * @return FILE* 
+ */
 	FILE* fopen_mkdirs(const string& path, const string& mode){
 
 		FILE* f = fopen(path.c_str(), mode.c_str());
@@ -1508,6 +1551,14 @@ namespace ccutil{
 		return true;
 	}
 
+/**
+ * @brief 
+ * 删除目录下所有文件及空文件夹
+ * @param directory 
+ * @param ignore_fail 
+ * @return true 
+ * @return false 
+ */
 	bool rmtree(const string& directory, bool ignore_fail){
 
 		auto files = findFiles(directory, "*", false);
@@ -1545,6 +1596,7 @@ namespace ccutil{
 		getRandom().reset(new cv::RNG(seed));
 	}
 
+// 获得在low和high之间的随机数
 	float randrf(float low, float high){
 		if (high < low) std::swap(low, high);
 		return getRandom()->uniform(low, high);
@@ -1556,12 +1608,14 @@ namespace ccutil{
 		return cv::Rect(x, y, size.width, size.height);
 	}
 
+// 随机不高于整数
 	int randr(int high){
 		int low = 0;
 		if (high < low) std::swap(low, high);
 		return randr(low, high);
 	}
 
+// 随机不高于在low和high之间的整数
 	int randr(int low, int high){
 		if (high < low) std::swap(low, high);
 		return getRandom()->uniform(low, high);
@@ -1670,6 +1724,14 @@ namespace ccutil{
 		return labels[label];
 	}
 
+/**
+ * @brief 
+ * 为目标绘制边界框
+ * @param image 
+ * @param bbox 
+ * @param drawType 数据集类型
+ * @param labelText 自定义标签
+ */
 	void drawbbox(cv::Mat& image, const BBox& bbox, DrawType drawType, const string& labelText){
 
 		string name;
@@ -1703,6 +1765,7 @@ namespace ccutil{
 		}
 	}
 
+// 定义顺序数组
 	vector<int> seque(int begin, int end){
 
 		if (end < begin) std::swap(begin, end);
@@ -1719,6 +1782,7 @@ namespace ccutil{
 		return seque(0, end);
 	}
 
+// 定义随机数组
 	vector<int> shuffleSeque(int begin, int end){
 		auto out = seque(begin, end);
 		shuffle(out);
