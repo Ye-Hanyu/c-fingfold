@@ -23,8 +23,22 @@ cout << "begin end ha" << endl;
 	// imshow("Image", img);//创建一个窗口来显示图像img
 	// waitKey(0);//不断刷新图像
     HelloFunc();
+    const string file = "/home/ye/图片/test.xml";
+    string file_data = ccutil::loadfile(file);
+    string *file_ptr = &file_data;
+    const string mode = "rw";
+    ccutil::BinIO bino = ccutil::BinIO(file_ptr);
+    int length = 0;
+    bino >> length;
+    
+    // bino.openMemoryWrite();
+    char data_bino[5]="abcd";
+    bino << data_bino;
+
+
     int info[4];
-    string str1="hahs.png";
+    string str1="liuanqi____abc";
+    auto val = ccutil::S(str1)(0, -3);
     string str2="hahs.png;hahs.png";
     // string dir = "/home/ye/图片/1";
     // bool is_dir = ccutil::rmtree(dir);
@@ -42,7 +56,7 @@ cout << "begin end ha" << endl;
     ccutil::BBox btest = {};
     string filter = "*";
     vector<string> list = ccutil::findFiles("/home/ye/图片", filter, true, true);
-    string file = "/home/ye/图片/test.xml";
+    ;
     string data = ccutil::loadfile(file);
     auto size = ccutil::fileSize(file);
     int width = 1344;

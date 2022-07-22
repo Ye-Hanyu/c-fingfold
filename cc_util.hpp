@@ -188,6 +188,7 @@ namespace ccutil {
 		_T& ref_;
 		__SelectElement(_T& v):ref_(v) {}
 
+	// 重载索引[],将负数作为从后向前索引
 		typename _T::const_reference operator[](int pos) const {
 			if (pos < 0)
 				pos = (int)ref_.size() + pos;
@@ -200,9 +201,10 @@ namespace ccutil {
 			return ref_[pos];
 		}
 
+// 将（）重载，取end位数，负数则取到末尾该数为止
 		_T operator()(int end) {
 			if (end < 0)
-				end = (int)ref_.size() + end + 1;
+				end = (int)ref_.size() + end;
 
 			_T out;
 			for (int index = 0; index != end; ++index)
@@ -210,9 +212,10 @@ namespace ccutil {
 			return std::move(out);
 		}
 
+//将（）重载，以begin位数为开始，取到end位数，负数则取到末尾该数为止
 		_T operator()(int begin, int end, int step = 1) {
 			if (end < 0)
-				end = (int)ref_.size() + end + 1;
+				end = (int)ref_.size() + end;
 
 			_T out;
 			for (int index = begin; index != end; index += step)
@@ -220,6 +223,7 @@ namespace ccutil {
 			return std::move(out);
 		}
 
+// 取数组到第inds位
 		vector<typename _T::value_type> operator[](const vector<int>& inds) {
 			_T out;
 			for (auto& index : inds)
@@ -254,7 +258,7 @@ namespace ccutil {
 	void __log_func(const char* file, int line, int level, const char* fmt, ...);
 	///////////////////////////////////////////////////////////////////////////////////////////////
 
-	//bbox nms
+
 	vector<BBox> nmsAsClass(const vector<BBox>& objs, float iou_threshold);
 	vector<BBox> nms(vector<BBox>& objs, float iou_threshold);
 	vector<BBox> nmsMinIoU(vector<BBox>& objs, float iou_threshold);
@@ -262,15 +266,15 @@ namespace ccutil {
 	//bbox softnms with linear method
 	vector<BBox> softnms(vector<BBox>& B, float iou_threshold);
 
-	//string operator
+
 	vector<string> split(const string& str, const string& spstr);
 	vector<int> splitInt(const string& str, const string& spstr);
 	vector<float> splitFloat(const string& str, const string& spstr);
 
-	//str="abcdef"   begin="ab"   end="f"   return "cde"
+
 	string middle(const string& str, const string& begin, const string& end);
 
-	
+
 	vector<LabBBox> loadxmlFromData(const string& data, int* width, int* height, const string& filter);
 	vector<LabBBox> loadxml(const string& file, int* width = nullptr, int* height = nullptr, const string& filter = "");
 	bool savexml(const string& file, string imagename, int width, int height, const vector<LabBBox>& objs);
@@ -282,8 +286,7 @@ namespace ccutil {
 	bool isblank(const string& str, char blank = ' ');
 	bool saveList(const string& file, const vector<string>& list);
 
-	//name,label,x,y,r,b
-	//key = name, value = label,x,y,r,b
+
 	map<string, string> loadListMap(const string& listfile);
 	cv::Mat loadMatrix(FILE* file);
 	bool saveMatrix(FILE* file, const cv::Mat& m);
@@ -291,7 +294,7 @@ namespace ccutil {
 	bool saveMatrix(const string& file, const cv::Mat& m);
 	bool imwrite(const string& file, const cv::Mat& image);
 
-	//voc
+
 	string vocxml(const string& vocjpg);
 	string vocjpg(const string& vocxml);
 
@@ -313,7 +316,7 @@ namespace ccutil {
 	//  c:/abcddd/  ->  return c:/abcddd/
 	string directory(const string& path);
 
-	//with
+
 	bool beginsWith(const string& str, const string& with);
 	bool endsWith(const string& str, const string& with);
 
@@ -353,6 +356,7 @@ namespace ccutil {
 	void shuffle(_T& var) { std::random_shuffle(var.begin(), var.end()); }
 
 	template<typename _T>
+	// 使两者size一致
 	void sameSizeArray(_T& a, _T& b) {
 		if (a.size() > b.size())
 			a.erase(a.begin() + b.size(), a.end());
@@ -370,16 +374,16 @@ namespace ccutil {
 	FILE* fopen_mkdirs(const string& path, const string& mode);
 	void setRandomSeed(int seed);
 
-	//[low, high)
+
 	float randrf(float low, float high);
 	cv::Rect randbox(cv::Size size, cv::Size limit);
 
-	//[low, high)
+
 	int randr(int low, int high);
 	int randr(int high);
 	int randr_exclude(int mi, int mx, int exclude);
 
-	//[low, end)
+
 	vector<int> seque(int begin, int end);
 	vector<int> seque(int end);
 	vector<int> shuffleSeque(int begin, int end);
@@ -397,6 +401,7 @@ namespace ccutil {
 		return arr[n];
 	}
 
+// 重复list到指定长度或截断list
 	template<typename _T>
 	void repeat(vector<_T>& list, int count, bool requirement_count_matched = false) {
 
@@ -420,6 +425,7 @@ namespace ccutil {
 	int vocLabel(const string& name);
 	int cocoLabel(const string& name);
 	string cocoName(int label);
+	
 
 	enum DrawType : int {
 		CoCo = 0,
