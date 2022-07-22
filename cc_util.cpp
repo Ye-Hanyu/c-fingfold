@@ -53,6 +53,7 @@ namespace ccutil{
 		FILE* handler = nullptr;
 		size_t lines = 0;
 
+
 		void setLoggerSaveDirectory(const string& loggerDirectory) {
 
 			//if logger is stop
@@ -957,7 +958,7 @@ namespace ccutil{
 
 /**
  * @brief 
- * 载入list文件为map
+ * 载入list文件为map,以第一个，为分割每行，前面为key，后面为value
  * @param listfile 
  * @return map<string, string> 
  */
@@ -1685,7 +1686,7 @@ namespace ccutil{
 		return voclabels;
 	}
 
-	/*const vector<string>& cocoLabels(){
+	const vector<string>& cocoLabels(){
 		static vector<string> cocolabels{
 			"person", "bicycle", "car", "motorcycle", "airplane",
 			"bus", "train", "truck", "boat", "traffic light", "fire hydrant",
@@ -1702,13 +1703,14 @@ namespace ccutil{
 			"scissors", "teddy bear", "hair drier", "toothbrush"
 		};
 		return cocolabels;
-	}*/
-	const vector<string>& cocoLabels() {
-		static vector<string> cocolabels{
-			"head"
-		};
-		return cocolabels;
 	}
+	
+	// const vector<string>& cocoLabels() {
+	// 	static vector<string> cocolabels{
+	// 		"head"
+	// 	};
+	// 	return cocolabels;
+	// }
 
 	string vocName(int label){
 		auto& labels = vocLabels();
