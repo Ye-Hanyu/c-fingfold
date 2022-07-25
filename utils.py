@@ -2,7 +2,7 @@
 Author: YeHanyu
 Date: 2022-07-22 13:47:25
 LastEditors: YeHanyu
-LastEditTime: 2022-07-25 16:59:51
+LastEditTime: 2022-07-25 18:16:57
 FilePath: /c-fingfold/utils.py
 Description: 
 
@@ -26,7 +26,25 @@ import cv2 as cv
 import matplotlib.pyplot as plt
 
 
+VOC = ("aeroplane", "bicycle", "bird", "boat",
+			"bottle", "bus", "car", "cat", "chair",
+			"cow", "diningtable", "dog", "horse",
+			"motorbike", "person", "pottedplant",
+			"sheep", "sofa", "train", "tvmonitor")
 
+CoCo = ("person", "bicycle", "car", "motorcycle", "airplane",
+			"bus", "train", "truck", "boat", "traffic light", "fire hydrant",
+			"stop sign", "parking meter", "bench", "bird", "cat", "dog", "horse",
+			"sheep", "cow", "elephant", "bear", "zebra", "giraffe", "backpack",
+			"umbrella", "handbag", "tie", "suitcase", "frisbee", "skis",
+			"snowboard", "sports ball", "kite", "baseball bat", "baseball glove",
+			"skateboard", "surfboard", "tennis racket", "bottle", "wine glass",
+			"cup", "fork", "knife", "spoon", "bowl", "banana", "apple", "sandwich",
+			"orange", "broccoli", "carrot", "hot dog", "pizza", "donut", "cake",
+			"chair", "couch", "potted plant", "bed", "dining table", "toilet", "tv",
+			"laptop", "mouse", "remote", "keyboard", "cell phone", "microwave",
+			"oven", "toaster", "sink", "refrigerator", "book", "clock", "vase",
+			"scissors", "teddy bear", "hair drier", "toothbrush")
 
 DEFAULT_FMT = "%(asctime)s - %(levelname)s - %(message)s"
 
@@ -70,14 +88,14 @@ param {*} b 右下角点y
 param {*} label 类别标签
 '''
 class BBox():
-    def __init__(self, x = 0, y = 0,r = 0, b = 0, score = 0, label = 0, classname = ''):
+    def __init__(self, x = 0, y = 0,r = 0, b = 0, score = 0, label = 0):
         self.x = x
         self.y = y
         self.r = r
         self.b = b
         self.score = score
         self.label = label
-        self.classname = classname
+
 
     def width(self):
         return(self.r-self.x)
@@ -235,13 +253,19 @@ def patternMatch(str, matcher_list, igrnoe_case=True):
                 continue
     return False
 
-def loadxml(file):
+def loadxml(file, DrawType):
     xml_tree = ET.parse(file)
     objs = xml_tree.findall('object')
     output=[]
     for i, obj in enumerate(objs): 
         out = BBox()
-        out.classname = obj.find('name').text
+        name = obj.find('name').text
+        for i, classname in enumerate(DrawType):
+            if classname == name:
+                out.label = i
+                break
+            else:
+                continue
         out.x = int(obj.find('bndbox').find('xmin').text)
         out.y = int(obj.find('bndbox').find('ymin').text)
         out.r = int(obj.find('bndbox').find('xmax').text)
@@ -249,7 +273,7 @@ def loadxml(file):
         output.append(out)
     return output
 
-def savexml(xml_path, img_full_path, width, height, obj_list):
+def savexml(xml_path, img_full_path, width, height, obj_list, DrawType):
     """
     生成矩形框标注文件
     :param xml_path: 标注文件路径
@@ -257,6 +281,7 @@ def savexml(xml_path, img_full_path, width, height, obj_list):
     :param obj_list: 目标位置信息列表  (xmin,ymin,xmax,ymax,label)
     :param width:图像宽
     :param height:图像宽
+    :param DrawType: 标签list，默认有CoCo,VOC
     """
     # 1.创建DOM树对象
     dom = minidom.Document()
@@ -322,7 +347,7 @@ def savexml(xml_path, img_full_path, width, height, obj_list):
 
         name_node = dom.createElement('name')
         object_node.appendChild(name_node)
-        name_node_text = dom.createTextNode(str(obj.classname))
+        name_node_text = dom.createTextNode(str(DrawType[obj.label]))
         name_node.appendChild(name_node_text)
 
         pose_node = dom.createElement('pose')
@@ -367,7 +392,7 @@ def savexml(xml_path, img_full_path, width, height, obj_list):
         with open(xml_path, 'w', encoding='UTF-8') as fh:
             # 4.writexml()第一个参数是目标文件对象,第二个参数是根节点的缩进格式,第三个参数是其他子节点的缩进格式,
             # 第四个参数制定了换行格式,第五个参数制定了xml内容的编码。
-            dom.writexml(fh, addindent=" ", newl="\n",encoding='UTF-8')
+            dom.writexml(fh, addindent="    ", newl="\n",encoding='UTF-8')
             # print('写入xml OK!')
     except Exception as err:
         print('错误信息：{0}'.format(err))

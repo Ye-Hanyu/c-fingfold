@@ -16,5 +16,6 @@ filelist= glob('/home/ye/图片/**',recursive=True)
 path = Path('/home/ye/图片/')
 dirs = [e for e in path.iterdir() if e.is_dir()]
 str3 = str2.split('s')
-objs = loadxml('/home/ye/图片/test2.xml')
+objs = loadxml('/home/ye/图片/test2.xml',CoCo)
+savexml('/home/ye/图片/test3.xml','/',1344,1344,objs,VOC)
 end = 0

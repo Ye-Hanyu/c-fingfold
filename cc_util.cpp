@@ -1076,7 +1076,6 @@ namespace ccutil{
 		if (!f) return false;
 
 		for (int i = 0; i < list.size(); ++i){
-
 			auto& item = list[i];
 			if (i < (int)list.size() - 1){
 				fprintf(f, "%s\n", item.c_str());
