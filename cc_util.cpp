@@ -53,7 +53,11 @@ namespace ccutil{
 		FILE* handler = nullptr;
 		size_t lines = 0;
 
-
+  /*** 
+   * @description: 
+   * @param {string&} loggerDirectory
+   * @return {*}
+   */
 		void setLoggerSaveDirectory(const string& loggerDirectory) {
 
 			//if logger is stop
